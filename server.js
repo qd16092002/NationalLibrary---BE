@@ -116,7 +116,7 @@ app.post("/register", async (req, res) => {
 
     // Trả về token cho client
     const token = jwt.sign({ username }, "mysecretkey");
-    return res.json("Thành công");
+    return res.json("Thành Công");
   } catch (error) {
     console.error(error);
     res.status(500).send("Lỗi server");
@@ -141,10 +141,32 @@ app.post("/login", async (req, res) => {
 
     // Trả về token cho client
     const token = jwt.sign({ username }, "mysecretkey");
-    res.send({ user });
+    console.log(token);
+    res.send({ accessToken: token });
   } catch (error) {
     console.error(error);
     res.status(500).send("Lỗi server");
+  }
+});
+
+app.get("/user/profile", async (req, res) => {
+  const bearerToken = req.headers.authorization;
+  if (bearerToken) {
+    console.log("bearerToken", bearerToken);
+    let token = bearerToken.split(" ")[1];
+    console.log(token);
+    let decrypt = jwt.verify(token, "mysecretkey");
+    const username = decrypt.username;
+    console.log("username", username);
+    const user = await User.find({
+      username: username,
+    });
+    console.log("user", user);
+
+    res.status(200).send({
+      username: user[0].username,
+      email: user[0].email,
+    });
   }
 });
 //Cập nhật thông tin của user
