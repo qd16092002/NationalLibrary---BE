@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const app = express();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const bodyParser = require("body-parser");
 app.use(cors());
 
 // parse requests of content-type - application/json
@@ -57,13 +57,15 @@ const User = mongoose.model("User", {
   },
   birthday: {
     type: Date,
-    unique: true,
   },
   gender: {
     type: String,
-    unique: true,
   },
   phone: {
+    type: String,
+    unique: true,
+  },
+  codeStudent: {
     type: String,
     unique: true,
   },
@@ -71,8 +73,16 @@ const User = mongoose.model("User", {
 // Đăng ký tài khoản
 app.post("/register", async (req, res) => {
   try {
-    const { username, password, cccd, email, birthday, gender, phone } =
-      req.body;
+    const {
+      username,
+      password,
+      cccd,
+      email,
+      birthday,
+      gender,
+      phone,
+      codeStudent,
+    } = req.body;
 
     // Kiểm tra username đã được sử dụng chưa
     const user = await User.findOne({ username });
@@ -93,6 +103,7 @@ app.post("/register", async (req, res) => {
       birthday,
       gender,
       phone,
+      codeStudent,
     });
 
     // Lưu vào cơ sở dữ liệu
@@ -131,12 +142,20 @@ app.post("/login", async (req, res) => {
     res.status(500).send("Lỗi server");
   }
 });
-app.patch("/update/:_id", async (req, res, next) => {
-  const { _id } = req.params;
-  try {
-    const user = await User.findById(_id);
-  } catch (error) {}
+//Cập nhật thông tin của user
+app.put("/users/:codeStudent", (req, res) => {
+  const userId = req.params.codeStudent; // Lấy id từ URL
+  const { name, cccd, email, birthday, gender, phone } = req.body; // Lấy thông tin người dùng từ request body
+
+  // Cập nhật thông tin người dùng trong CSDL
+  User.updateOne(
+    { codeStudent: userId },
+    { name, cccd, email, birthday, gender, phone }
+  )
+    .then(() => {
+      res.status(200).json({ message: "Update user successfully" });
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
 });
-// app.patch("/profile",async(req,res,next)=>{
-//   const
-// });
