@@ -61,6 +61,9 @@ const User = mongoose.model("User", {
   gender: {
     type: String,
   },
+  name: {
+    type: String,
+  },
   phone: {
     type: String,
     unique: true,
@@ -77,6 +80,7 @@ app.post("/register", async (req, res) => {
       username,
       password,
       cccd,
+      name,
       email,
       birthday,
       gender,
@@ -98,6 +102,7 @@ app.post("/register", async (req, res) => {
     const newUser = new User({
       username,
       password: hash,
+      name,
       cccd,
       email,
       birthday,
