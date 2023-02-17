@@ -116,7 +116,7 @@ app.post("/register", async (req, res) => {
 
     // Trả về token cho client
     const token = jwt.sign({ username }, "mysecretkey");
-    return res.json("Thanhf cong");
+    return res.json("Thành công");
   } catch (error) {
     console.error(error);
     res.status(500).send("Lỗi server");
@@ -159,6 +159,19 @@ app.put("/users/:codeStudent", (req, res) => {
   )
     .then(() => {
       res.status(200).json({ message: "Update user successfully" });
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+// Lock account and Unlock Account
+app.patch("/update/status/:codeStudent", async (req, res) => {
+  const userId = req.params.codeStudent;
+  const { status } = req.body;
+
+  User.updateOne({ codeStudent: userId }, { status })
+    .then(() => {
+      res.status(200).json({ message: "Update user status successfully" });
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });
