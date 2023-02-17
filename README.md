@@ -6,8 +6,9 @@
 ```
 npm install
 ```
+## Login MonggoDB
 
 ### Run
 ```
-node server.js
+npm start
 ```
